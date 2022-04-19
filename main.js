@@ -10,7 +10,7 @@
 
     self.Board.prototype = {
         get elements(){
-            var elements = this.bars;
+            var elements = this.bars.map(function(bar){return bar;});
             elements.push(this.ball);
             return elements;
         }
@@ -25,10 +25,19 @@
         this.speed_y = 0;
         this.speed_x = 3;
         this.board = board;
+        this.direction = 1;
 
         board.ball = this;
         this.kind = "circle";
     }
+
+    self.Ball.prototype = {
+        move: function(){
+            this.x += (this.speed_x * this.direction);
+            this.y += (this.speed_y);
+        }
+    }
+
 })();
 
 (function(){
@@ -80,6 +89,7 @@
         play: function(){
             this.clean();
             this.draw();
+            this.board.ball.move();
         }
     }
 
@@ -107,6 +117,9 @@ var board_view = new BoardView(canvas, board);
 var ball = new Ball(350, 100, 10, board);
 
 window.requestAnimationFrame(controller);
+setTimeout(function(){
+    ball.direction = -1;
+},4000);
 
 document.addEventListener("keydown", function(ev){
     ev.preventDefault();
