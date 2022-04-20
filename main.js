@@ -1,4 +1,5 @@
 (function(){
+    // Define the class Board, it's 
     self.Board = function(width,height){
         this.width = width;
         this.height = height;
@@ -169,7 +170,7 @@
                 break;
             case "circle":
                 ctx.beginPath();
-                ctx.arc(element.x, element.y, element.radius, 0, 7);
+                ctx.arc(element.x, element.y, element.radius, 0, 2*Math.PI);
                 ctx.fill();
                 ctx.closePath();
                 break;
