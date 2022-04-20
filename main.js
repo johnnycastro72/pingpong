@@ -40,6 +40,11 @@
         move: function(){
             this.x += (this.speed_x * this.direction);
             this.y += (this.speed_y);
+            if(this.y <= 0){
+                this.y = this.board.height;
+            } else if(this.y >= this.board.height) {
+                this.y = 0;
+            }
         },
         get width(){
             return this.radius * 2;
@@ -83,9 +88,15 @@
     self.Bar.prototype = {
         down: function(){
             this.y += this.speed;
+            if(this.y >= this.board.height){
+                this.y = 0;
+            }
         },
         up: function() {
             this.y -= this.speed;
+            if(this.y + this.height <= 0){
+                this.y = this.board.height;
+            }
         },
         toString: function(){
             return "x: " + this.x + " y: " + this.y;
@@ -193,22 +204,21 @@ setTimeout(function(){
 },4000);
 
 document.addEventListener("keydown", function(ev){
-    console.log(ev.key)
     if(ev.key == "ArrowUp"){
-        ev.preventDefault();
-        bar_1.up();
-    }
-    else if(ev.key == "ArrowDown"){
-        ev.preventDefault();
-        bar_1.down();
-    }
-    if(ev.key.toLowerCase() == "w"){
         ev.preventDefault();
         bar_2.up();
     }
-    else if(ev.key.toLowerCase() == "s"){
+    else if(ev.key == "ArrowDown"){
         ev.preventDefault();
         bar_2.down();
+    }
+    if(ev.key.toLowerCase() == "w"){
+        ev.preventDefault();
+        bar_1.up();
+    }
+    else if(ev.key.toLowerCase() == "s"){
+        ev.preventDefault();
+        bar_1.down();
     }
     else if(ev.key == " "){
         ev.preventDefault();
