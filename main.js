@@ -1,5 +1,13 @@
+/**
+ * Define the class Board, represent the board that contains the game
+ * 
+ * @param width  {int} define the width of the board
+ * @param height {int} define the height of the board
+ *  
+ * @version 1.0
+ * @author Jhonny Castro <johnny.castro@misena.edu.co>
+ **/ 
 (function(){
-    // Define the class Board, it's 
     self.Board = function(width,height){
         this.width = width;
         this.height = height;
@@ -10,6 +18,7 @@
         this.playing = false;
     }
 
+    // implements board elements getters
     self.Board.prototype = {
         get elements(){
             var elements = this.bars.map(function(bar){return bar;});
@@ -19,6 +28,17 @@
     }
 })();
 
+/**
+ * Define the class Ball, represent the ball in ping pong game
+ * 
+ * @param x {int} define the ball horizontal initial position
+ * @param y {int} define the ball vertical initial position
+ * @param radius {int} define the ball radius
+ * @param board  {Board} define the Board container
+ *  
+ * @version 1.0
+ * @author Jhonny Castro <johnny.castro@misena.edu.co>
+ */
 (function(){
     self.Ball = function(x, y, radius, board){
         this.x = x;
@@ -36,7 +56,9 @@
         this.kind = "circle";
     }
 
+    // implements ball methods
     self.Ball.prototype = {
+        // move the ball in the board.
         move: function(){
             this.x += (this.speed_x * this.direction);
             this.y += (this.speed_y);
@@ -46,12 +68,15 @@
                 this.y = 0;
             }
         },
+        // getter method for width.
         get width(){
             return this.radius * 2;
         },
+        // getter method for height.
         get height(){
             return this.radius * 2;
         },
+        // change the ball direction after a object collision.
         collision: function(bar){
             // react to the bar collision.
             var relative_intersect_y = (bar.y + (bar.height / 2)) - this.y;
@@ -73,6 +98,18 @@
 
 })();
 
+/**
+ * Define the class Bar, represent the bars in ping pong game
+ * 
+ * @param x {int} define the bar horizontal initial position
+ * @param y {int} define the bar vertical initial position
+ * @param width {int} define the ball width
+ * @param height {int} define the ball height
+ * @param board  {Board} define the Board container
+ *  
+ * @version 1.0
+ * @author Jhonny Castro <johnny.castro@misena.edu.co>
+ */
 (function(){
     self.Bar = function(x, y, width, height, board){
         this.x = x;
@@ -85,19 +122,23 @@
         this.speed = 10;
     }
 
-    self.Bar.prototype = {
+   // implements bar methods
+   self.Bar.prototype = {
+        // Move the bar down
         down: function(){
             this.y += this.speed;
             if(this.y >= this.board.height){
                 this.y = 0;
             }
         },
+        // Move the bar up
         up: function() {
             this.y -= this.speed;
             if(this.y + this.height <= 0){
                 this.y = this.board.height;
             }
         },
+        // Return the coords of the bar
         toString: function(){
             return "x: " + this.x + " y: " + this.y;
         }
@@ -105,7 +146,16 @@
 
 })();
 
-(function(){
+/**
+ * Define the class BoardView, represent the view of the game
+ * 
+ * @param canvas {object} define the canvas object
+ * @param board  {Board} define the Board container
+ *  
+ * @version 1.0
+ * @author Jhonny Castro <johnny.castro@misena.edu.co>
+ */
+ (function(){
     self.BoardView = function(canvas, board){
         this.canvas = canvas;
         this.canvas.width = board.width;
@@ -114,10 +164,13 @@
         this.ctx = canvas.getContext("2d");
     }
 
-    self.BoardView.prototype = {
+   // implements boardview methods
+   self.BoardView.prototype = {
+        // Clean the board area
         clean: function(){
             this.ctx.clearRect(0, 0, this.board.width, this.board.height);
         },
+        // Draw the objects in the board area
         draw: function(){
             for (var i = this.board.elements.length - 1; i >= 0; i--) {
                 var el = this.board.elements[i];
@@ -125,6 +178,7 @@
                 draw(this.ctx, el);
             }
         },
+        // Check for objects collision
         checkCollisions: function(){
             for (var i = this.board.bars.length - 1; i >= 0; i--){
                 var bar = this.board.bars[i]
@@ -133,6 +187,7 @@
                 }
             }
         },
+        // Play the game
         play: function(){
             if(this.board.playing){
                 this.clean();
@@ -143,6 +198,15 @@
         }
     }
 
+    /**
+     * Define the function hit, determine whether two objects collision
+     * 
+     * @param object1 {object} define the first object
+     * @param object2 {object} define the second object
+     *  
+     * @version 1.0
+     * @author Jhonny Castro <johnny.castro@misena.edu.co>
+     */
     function hit(object1, object2){
         var hit = false;
 
@@ -174,6 +238,15 @@
         return hit;
     }
 
+    /**
+     * Define the function draw, draw the object in the canvas context
+     * 
+     * @param ctx {*} define the context
+     * @param element {object} define the element to draw
+     *  
+     * @version 1.0
+     * @author Jhonny Castro <johnny.castro@misena.edu.co>
+     */
     function draw(ctx, element){
         switch(element.kind){
             case "rectangle":
@@ -185,11 +258,11 @@
                 ctx.fill();
                 ctx.closePath();
                 break;
-
         }
     }
 })();
 
+// objects initialization
 var board = new Board(800,400);
 var bar_1 = new Bar(20,100,40,100,board);
 var bar_2 = new Bar(740,100,40,100,board);
@@ -197,12 +270,11 @@ var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas, board);
 var ball = new Ball(350, 100, 10, board);
 
+// draw the initial game
 board_view.draw();
 window.requestAnimationFrame(controller);
-setTimeout(function(){
-    ball.direction = -1;
-},4000);
 
+// Check what key was pressed and assign methods to that event.
 document.addEventListener("keydown", function(ev){
     if(ev.key == "ArrowUp"){
         ev.preventDefault();
@@ -227,8 +299,12 @@ document.addEventListener("keydown", function(ev){
 
 });
 
-//window.addEventListener("load", main);
-
+/**
+ * Define the function controller, initialize the game
+ * 
+ * @version 1.0
+ * @author Jhonny Castro <johnny.castro@misena.edu.co>
+ */
 function controller() {
     board_view.play();
     window.requestAnimationFrame(controller);
